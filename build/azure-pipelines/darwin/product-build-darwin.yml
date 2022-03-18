@@ -40,7 +40,7 @@ steps:
   - script: |
       set -e
       git fetch https://github.com/$(VSCODE_MIXIN_REPO).git $VSCODE_OVERRIDE_COMMIT
-      git checkout $VSCODE_OVERRIDE_COMMIT
+      git checkout -- FETCH_HEAD
     condition: and(succeeded(), ne(variables.VSCODE_OVERRIDE_COMMIT, ''))
     displayName: Checkout override commit
 
