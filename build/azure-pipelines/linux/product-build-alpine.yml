@@ -44,10 +44,10 @@ steps:
 
   - script: |
       set -e
-      git fetch https://github.com/$(VSCODE_MIXIN_REPO).git $VSCODE_DISTRO_COMMIT
-      git checkout $VSCODE_DISTRO_COMMIT
-    condition: and(succeeded(), ne(variables.VSCODE_DISTRO_COMMIT, ''))
-    displayName: Checkout distro
+      git fetch https://github.com/$(VSCODE_MIXIN_REPO).git $VSCODE_OVERRIDE_COMMIT
+      git checkout $VSCODE_OVERRIDE_COMMIT
+    condition: and(succeeded(), ne(variables.VSCODE_OVERRIDE_COMMIT, ''))
+    displayName: Checkout override commit
 
   - script: |
       set -e

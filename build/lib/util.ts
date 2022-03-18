@@ -324,7 +324,7 @@ function validateVersion(version: string | undefined): string | undefined {
 }
 
 export function getVersion(root: string): string | undefined {
-	return validateVersion(process.env['VSCODE_DISTRO_COMMIT'])
+	return validateVersion(process.env['VSCODE_OVERRIDE_COMMIT'])
 		?? validateVersion(process.env['BUILD_SOURCEVERSION'])
 		?? git.getVersion(root);
 }
