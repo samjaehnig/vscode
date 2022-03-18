@@ -10,8 +10,9 @@ schedules:
 
 parameters:
   - name: VSCODE_DISTRO_COMMIT
-    displayName: Distro Commit
+    displayName: Override Commit
     type: string
+    default: ''
   - name: VSCODE_QUALITY
     displayName: Quality
     type: string
