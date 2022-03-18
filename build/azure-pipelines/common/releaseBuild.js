@@ -4,9 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
 const identity_1 = require("@azure/identity");
 const cosmos_1 = require("@azure/cosmos");
 const retry_1 = require("./retry");
+const git = require("../../lib/git");
+const root = path.dirname(path.dirname(path.dirname(__dirname)));
 function getEnv(name) {
     const result = process.env[name];
     if (typeof result === 'undefined') {
@@ -29,7 +32,7 @@ async function getConfig(client, quality) {
     return res.resources[0];
 }
 async function main() {
-    const commit = getEnv('BUILD_SOURCEVERSION');
+    const commit = git.getVersion(root);
     const quality = getEnv('VSCODE_QUALITY');
     const aadCredentials = new identity_1.ClientSecretCredential(process.env['AZURE_TENANT_ID'], process.env['AZURE_CLIENT_ID'], process.env['AZURE_CLIENT_SECRET']);
     const client = new cosmos_1.CosmosClient({ endpoint: process.env['AZURE_DOCUMENTDB_ENDPOINT'], aadCredentials });

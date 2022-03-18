@@ -14,7 +14,7 @@ import * as mime from 'mime';
 import { CosmosClient } from '@azure/cosmos';
 import { ClientSecretCredential } from '@azure/identity';
 import { retry } from './retry';
-import { getVersion } from '../../lib/util';
+import * as git from '../../lib/git';
 
 const root = path.dirname(path.dirname(path.dirname(__dirname)));
 
@@ -161,7 +161,7 @@ async function main(): Promise<void> {
 	const platform = getPlatform(product, os, arch, unprocessedType);
 	const type = getRealType(unprocessedType);
 	const quality = getEnv('VSCODE_QUALITY');
-	const commit = getVersion(root);
+	const commit = git.getVersion(root);
 
 	console.log('Creating asset...');
 

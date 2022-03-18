@@ -9,7 +9,7 @@ import * as path from 'path';
 import { ClientSecretCredential } from '@azure/identity';
 import { CosmosClient } from '@azure/cosmos';
 import { retry } from './retry';
-import { getVersion } from '../../lib/util';
+import * as git from '../../lib/git';
 
 const root = path.dirname(path.dirname(path.dirname(__dirname)));
 
@@ -48,7 +48,7 @@ async function getConfig(client: CosmosClient, quality: string): Promise<Config>
 }
 
 async function main(): Promise<void> {
-	const commit = getVersion(root);
+	const commit = git.getVersion(root);
 	const quality = getEnv('VSCODE_QUALITY');
 
 	const aadCredentials = new ClientSecretCredential(process.env['AZURE_TENANT_ID']!, process.env['AZURE_CLIENT_ID']!, process.env['AZURE_CLIENT_SECRET']!);

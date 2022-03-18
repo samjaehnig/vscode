@@ -13,7 +13,6 @@ import * as _ from 'underscore';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as _rimraf from 'rimraf';
-import * as git from './git';
 import * as VinylFile from 'vinyl';
 import { ThroughStream } from 'through';
 import * as sm from 'source-map';
@@ -317,16 +316,6 @@ export function ensureDir(dirPath: string): void {
 	}
 	ensureDir(path.dirname(dirPath));
 	fs.mkdirSync(dirPath);
-}
-
-function validateVersion(version: string | undefined): string | undefined {
-	return version && /^[0-9a-f]{40}$/i.test(version) ? version : undefined;
-}
-
-export function getVersion(root: string): string | undefined {
-	return validateVersion(process.env['VSCODE_OVERRIDE_COMMIT'])
-		?? validateVersion(process.env['BUILD_SOURCEVERSION'])
-		?? git.getVersion(root);
 }
 
 export function rebase(count: number): NodeJS.ReadWriteStream {

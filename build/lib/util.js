@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildWebNodePaths = exports.createExternalLoaderConfig = exports.acquireWebNodePaths = exports.getElectronVersion = exports.streamToPromise = exports.versionStringToNumber = exports.filter = exports.rebase = exports.getVersion = exports.ensureDir = exports.rreddir = exports.rimraf = exports.rewriteSourceMappingURL = exports.stripSourceMappingURL = exports.loadSourcemaps = exports.cleanNodeModules = exports.skipDirectories = exports.toFileUri = exports.setExecutableBit = exports.fixWin32DirectoryPermissions = exports.debounce = exports.incremental = void 0;
+exports.buildWebNodePaths = exports.createExternalLoaderConfig = exports.acquireWebNodePaths = exports.getElectronVersion = exports.streamToPromise = exports.versionStringToNumber = exports.filter = exports.rebase = exports.ensureDir = exports.rreddir = exports.rimraf = exports.rewriteSourceMappingURL = exports.stripSourceMappingURL = exports.loadSourcemaps = exports.cleanNodeModules = exports.skipDirectories = exports.toFileUri = exports.setExecutableBit = exports.fixWin32DirectoryPermissions = exports.debounce = exports.incremental = void 0;
 const es = require("event-stream");
 const _debounce = require("debounce");
 const _filter = require("gulp-filter");
@@ -12,7 +12,6 @@ const rename = require("gulp-rename");
 const path = require("path");
 const fs = require("fs");
 const _rimraf = require("rimraf");
-const git = require("./git");
 const VinylFile = require("vinyl");
 const root = path.dirname(path.dirname(__dirname));
 const NoCancellationToken = { isCancellationRequested: () => false };
@@ -253,15 +252,6 @@ function ensureDir(dirPath) {
     fs.mkdirSync(dirPath);
 }
 exports.ensureDir = ensureDir;
-function validateVersion(version) {
-    return version && /^[0-9a-f]{40}$/i.test(version) ? version : undefined;
-}
-function getVersion(root) {
-    return validateVersion(process.env['VSCODE_DISTRO_COMMIT'])
-        ?? validateVersion(process.env['BUILD_SOURCEVERSION'])
-        ?? git.getVersion(root);
-}
-exports.getVersion = getVersion;
 function rebase(count) {
     return rename(f => {
         const parts = f.dirname ? f.dirname.split(/[\/\\]/) : [];

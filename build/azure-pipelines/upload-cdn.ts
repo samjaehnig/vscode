@@ -9,14 +9,14 @@ import * as path from 'path';
 import * as es from 'event-stream';
 import * as Vinyl from 'vinyl';
 import * as vfs from 'vinyl-fs';
-import * as util from '../lib/util';
+import * as git from '../lib/git';
 import * as filter from 'gulp-filter';
 import * as gzip from 'gulp-gzip';
 import { ClientSecretCredential } from '@azure/identity';
 const azure = require('gulp-azure-storage');
 
 const root = path.dirname(path.dirname(__dirname));
-const commit = util.getVersion(root);
+const commit = git.getVersion(root);
 const credential = new ClientSecretCredential(process.env['AZURE_TENANT_ID']!, process.env['AZURE_CLIENT_ID']!, process.env['AZURE_CLIENT_SECRET']!);
 
 async function main(): Promise<void> {

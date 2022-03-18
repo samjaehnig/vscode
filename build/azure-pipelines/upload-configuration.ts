@@ -10,12 +10,13 @@ import * as os from 'os';
 import * as cp from 'child_process';
 import * as vfs from 'vinyl-fs';
 import * as util from '../lib/util';
+import * as git from '../lib/git';
 import { ClientSecretCredential } from '@azure/identity';
 const azure = require('gulp-azure-storage');
 import * as packageJson from '../../package.json';
 
 const root = path.dirname(path.dirname(__dirname));
-const commit = util.getVersion(root);
+const commit = git.getVersion(root);
 
 function generateVSCodeConfigurationTask(): Promise<string | undefined> {
 	return new Promise((resolve, reject) => {
