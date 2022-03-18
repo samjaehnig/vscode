@@ -319,14 +319,14 @@ export function ensureDir(dirPath: string): void {
 	fs.mkdirSync(dirPath);
 }
 
+function validateVersion(version: string | undefined): string | undefined {
+	return version && /^[0-9a-f]{40}$/i.test(version) ? version : undefined;
+}
+
 export function getVersion(root: string): string | undefined {
-	let version = process.env['BUILD_SOURCEVERSION'];
-
-	if (!version || !/^[0-9a-f]{40}$/i.test(version)) {
-		version = git.getVersion(root);
-	}
-
-	return version;
+	return validateVersion(process.env['VSCODE_DISTRO_COMMIT'])
+		?? validateVersion(process.env['BUILD_SOURCEVERSION'])
+		?? git.getVersion(root);
 }
 
 export function rebase(count: number): NodeJS.ReadWriteStream {

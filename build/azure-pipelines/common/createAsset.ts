@@ -6,6 +6,7 @@
 'use strict';
 
 import * as fs from 'fs';
+import * as path from 'path';
 import { Readable } from 'stream';
 import * as crypto from 'crypto';
 import { BlobServiceClient, BlockBlobParallelUploadOptions, StoragePipelineOptions, StorageRetryPolicyType } from '@azure/storage-blob';
@@ -13,6 +14,9 @@ import * as mime from 'mime';
 import { CosmosClient } from '@azure/cosmos';
 import { ClientSecretCredential } from '@azure/identity';
 import { retry } from './retry';
+import { getVersion } from '../../lib/util';
+
+const root = path.dirname(path.dirname(path.dirname(__dirname)));
 
 interface Asset {
 	platform: string;
@@ -157,7 +161,7 @@ async function main(): Promise<void> {
 	const platform = getPlatform(product, os, arch, unprocessedType);
 	const type = getRealType(unprocessedType);
 	const quality = getEnv('VSCODE_QUALITY');
-	const commit = getEnv('BUILD_SOURCEVERSION');
+	const commit = getVersion(root);
 
 	console.log('Creating asset...');
 

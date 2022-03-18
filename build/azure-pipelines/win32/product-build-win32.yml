@@ -39,6 +39,15 @@ steps:
   - powershell: |
       . build/azure-pipelines/win32/exec.ps1
       $ErrorActionPreference = "Stop"
+
+      exec { git fetch https://github.com/$(VSCODE_MIXIN_REPO).git $(VSCODE_DISTRO_COMMIT) }
+      exec { git checkout $(VSCODE_DISTRO_COMMIT) }
+    condition: and(succeeded(), ne(variables.VSCODE_DISTRO_COMMIT, ''))
+    displayName: Checkout distro
+
+  - powershell: |
+      . build/azure-pipelines/win32/exec.ps1
+      $ErrorActionPreference = "Stop"
       exec { git pull --no-rebase https://github.com/$(VSCODE_MIXIN_REPO).git $(node -p "require('./package.json').distro") }
     displayName: Merge distro
 

@@ -9,6 +9,9 @@ schedules:
         - joao/web
 
 parameters:
+  - name: VSCODE_DISTRO_COMMIT
+    displayName: Distro Commit
+    type: string
   - name: VSCODE_QUALITY
     displayName: Quality
     type: string
@@ -87,6 +90,8 @@ parameters:
     default: false
 
 variables:
+  - name: VSCODE_DISTRO_COMMIT
+    value: ${{ parameters.VSCODE_DISTRO_COMMIT }}
   - name: ENABLE_TERRAPIN
     value: ${{ eq(parameters.ENABLE_TERRAPIN, true) }}
   - name: VSCODE_QUALITY

@@ -253,12 +253,13 @@ function ensureDir(dirPath) {
     fs.mkdirSync(dirPath);
 }
 exports.ensureDir = ensureDir;
+function validateVersion(version) {
+    return version && /^[0-9a-f]{40}$/i.test(version) ? version : undefined;
+}
 function getVersion(root) {
-    let version = process.env['BUILD_SOURCEVERSION'];
-    if (!version || !/^[0-9a-f]{40}$/i.test(version)) {
-        version = git.getVersion(root);
-    }
-    return version;
+    return validateVersion(process.env['VSCODE_DISTRO_COMMIT'])
+        ?? validateVersion(process.env['BUILD_SOURCEVERSION'])
+        ?? git.getVersion(root);
 }
 exports.getVersion = getVersion;
 function rebase(count) {
