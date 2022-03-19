@@ -123,11 +123,12 @@ variables:
     value: microsoft/vscode-distro
   - name: skipComponentGovernanceDetection
     value: true
-  - name: VSCODE_BUILD_NAME
-    ${{ if(parameters.VSCODE_DISTRO_REF) }}: # allow-any-unicode-next-line
-      value: "[🔒 ${{ parameters.VSCODE_DISTRO_REF }}]"
-    ${{ else }}:
-      value: "[${{ variables['Build.SourceVersion'] }}]"
+  - ${{ if(parameters.VSCODE_DISTRO_REF) }}:
+      - name: VSCODE_BUILD_NAME # allow-any-unicode-next-line
+        value: "[🔒 ${{ parameters.VSCODE_DISTRO_REF }}]"
+  - ${{ else }}:
+      - name: VSCODE_BUILD_NAME
+        value: "[${{ variables['Build.SourceVersion'] }}]"
 
 name: $(VSCODE_BUILD_NAME)
 
