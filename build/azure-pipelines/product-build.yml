@@ -127,7 +127,7 @@ variables:
     ${{ if(parameters.VSCODE_DISTRO_REF) }}: # allow-any-unicode-next-line
       value: "[🔒 ${{ parameters.VSCODE_DISTRO_REF }}]"
     ${{ else }}:
-      value: "[${{ variables['Build.SourceVersion']) }}]"
+      value: "[${{ variables['Build.SourceVersion'] }}]"
 
 name: $(VSCODE_BUILD_NAME)
 
