@@ -90,11 +90,6 @@ parameters:
     type: boolean
     default: false
 
-${{ if(parameters.VSCODE_DISTRO_REF) }}: # allow-any-unicode-next-line
-  name: "[🔒 ${{ parameters.VSCODE_DISTRO_REF }}]"
-${{ else }}:
-  name: "[${{ variables['Build.SourceVersion']) }}]"
-
 variables:
   - name: VSCODE_DISTRO_REF
     value: ${{ parameters.VSCODE_DISTRO_REF }}
@@ -128,6 +123,13 @@ variables:
     value: microsoft/vscode-distro
   - name: skipComponentGovernanceDetection
     value: true
+  - name: VSCODE_BUILD_NAME
+    ${{ if(parameters.VSCODE_DISTRO_REF) }}: # allow-any-unicode-next-line
+      value: "[🔒 ${{ parameters.VSCODE_DISTRO_REF }}]"
+    ${{ else }}:
+      value: "[${{ variables['Build.SourceVersion']) }}]"
+
+name: $(VSCODE_BUILD_NAME)
 
 resources:
   containers:
