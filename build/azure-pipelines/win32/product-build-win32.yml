@@ -40,9 +40,9 @@ steps:
       . build/azure-pipelines/win32/exec.ps1
       $ErrorActionPreference = "Stop"
 
-      exec { git fetch https://github.com/$(VSCODE_MIXIN_REPO).git $(VSCODE_OVERRIDE_COMMIT) }
+      exec { git fetch https://github.com/$(VSCODE_MIXIN_REPO).git $(VSCODE_DISTRO_REF) }
       exec { git checkout FETCH_HEAD }
-    condition: and(succeeded(), ne(variables.VSCODE_OVERRIDE_COMMIT, ''))
+    condition: and(succeeded(), ne(variables.VSCODE_DISTRO_REF, ''))
     displayName: Checkout override commit
 
   - powershell: |

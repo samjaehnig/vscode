@@ -46,6 +46,7 @@ async function main(): Promise<void> {
 		timestamp: (new Date()).getTime(),
 		version,
 		isReleased: false,
+		private: Boolean(process.env['VSCODE_DISTRO_REF']),
 		sourceBranch,
 		queuedBy,
 		assets: [],

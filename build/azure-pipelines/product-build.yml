@@ -9,8 +9,8 @@ schedules:
         - joao/web
 
 parameters:
-  - name: VSCODE_OVERRIDE_COMMIT
-    displayName: Override Commit
+  - name: VSCODE_DISTRO_REF
+    displayName: Distro Ref (Private build)
     type: string
     default: ""
   - name: VSCODE_QUALITY
@@ -91,8 +91,8 @@ parameters:
     default: false
 
 variables:
-  - name: VSCODE_OVERRIDE_COMMIT
-    value: ${{ parameters.VSCODE_OVERRIDE_COMMIT }}
+  - name: VSCODE_DISTRO_REF
+    value: ${{ parameters.VSCODE_DISTRO_REF }}
   - name: ENABLE_TERRAPIN
     value: ${{ eq(parameters.ENABLE_TERRAPIN, true) }}
   - name: VSCODE_QUALITY
