@@ -90,6 +90,11 @@ parameters:
     type: boolean
     default: false
 
+${{ if(parameters.VSCODE_DISTRO_REF) }}: # allow-any-unicode-next-line
+  name: "[🔒 ${{ parameters.VSCODE_DISTRO_REF }}]"
+${{ else }}:
+  name: "[${{ variables['Build.SourceVersion']) }}]"
+
 variables:
   - name: VSCODE_DISTRO_REF
     value: ${{ parameters.VSCODE_DISTRO_REF }}
