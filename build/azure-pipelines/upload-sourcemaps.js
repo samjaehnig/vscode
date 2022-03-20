@@ -8,13 +8,12 @@ const path = require("path");
 const es = require("event-stream");
 const vfs = require("vinyl-fs");
 const util = require("../lib/util");
-const git = require("../lib/git");
 // @ts-ignore
 const deps = require("../lib/dependencies");
 const identity_1 = require("@azure/identity");
 const azure = require('gulp-azure-storage');
 const root = path.dirname(path.dirname(__dirname));
-const commit = git.getVersion(root);
+const commit = util.getVersion(root);
 const credential = new identity_1.ClientSecretCredential(process.env['AZURE_TENANT_ID'], process.env['AZURE_CLIENT_ID'], process.env['AZURE_CLIENT_SECRET']);
 // optionally allow to pass in explicit base/maps to upload
 const [, , base, maps] = process.argv;

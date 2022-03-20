@@ -8,7 +8,7 @@ const path = require("path");
 const identity_1 = require("@azure/identity");
 const cosmos_1 = require("@azure/cosmos");
 const retry_1 = require("./retry");
-const git = require("../../lib/git");
+const util = require("../../lib/util");
 const root = path.dirname(path.dirname(path.dirname(__dirname)));
 if (process.argv.length !== 3) {
     console.error('Usage: node createBuild.js VERSION');
@@ -24,7 +24,7 @@ function getEnv(name) {
 async function main() {
     const [, , _version] = process.argv;
     const quality = getEnv('VSCODE_QUALITY');
-    const commit = git.getVersion(root);
+    const commit = util.getVersion(root);
     const queuedBy = getEnv('BUILD_QUEUEDBY');
     const sourceBranch = getEnv('BUILD_SOURCEBRANCH');
     const version = _version + (quality === 'stable' ? '' : `-${quality}`);

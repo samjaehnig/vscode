@@ -10,12 +10,11 @@ const os = require("os");
 const cp = require("child_process");
 const vfs = require("vinyl-fs");
 const util = require("../lib/util");
-const git = require("../lib/git");
 const identity_1 = require("@azure/identity");
 const azure = require('gulp-azure-storage');
 const packageJson = require("../../package.json");
 const root = path.dirname(path.dirname(__dirname));
-const commit = git.getVersion(root);
+const commit = util.getVersion(root);
 function generateVSCodeConfigurationTask() {
     return new Promise((resolve, reject) => {
         const buildDir = process.env['AGENT_BUILDDIRECTORY'];

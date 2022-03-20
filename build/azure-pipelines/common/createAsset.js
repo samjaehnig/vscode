@@ -12,7 +12,7 @@ const mime = require("mime");
 const cosmos_1 = require("@azure/cosmos");
 const identity_1 = require("@azure/identity");
 const retry_1 = require("./retry");
-const git = require("../../lib/git");
+const util = require("../../lib/util");
 const root = path.dirname(path.dirname(path.dirname(__dirname)));
 if (process.argv.length !== 8) {
     console.error('Usage: node createAsset.js PRODUCT OS ARCH TYPE NAME FILE');
@@ -138,7 +138,7 @@ async function main() {
     const platform = getPlatform(product, os, arch, unprocessedType);
     const type = getRealType(unprocessedType);
     const quality = getEnv('VSCODE_QUALITY');
-    const commit = git.getVersion(root);
+    const commit = util.getVersion(root);
     console.log('Creating asset...');
     const stat = await new Promise((c, e) => fs.stat(filePath, (err, stat) => err ? e(err) : c(stat)));
     const size = stat.size;

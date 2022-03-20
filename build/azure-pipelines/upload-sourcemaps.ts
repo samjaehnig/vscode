@@ -10,14 +10,13 @@ import * as es from 'event-stream';
 import * as Vinyl from 'vinyl';
 import * as vfs from 'vinyl-fs';
 import * as util from '../lib/util';
-import * as git from '../lib/git';
 // @ts-ignore
 import * as deps from '../lib/dependencies';
 import { ClientSecretCredential } from '@azure/identity';
 const azure = require('gulp-azure-storage');
 
 const root = path.dirname(path.dirname(__dirname));
-const commit = git.getVersion(root);
+const commit = util.getVersion(root);
 const credential = new ClientSecretCredential(process.env['AZURE_TENANT_ID']!, process.env['AZURE_CLIENT_ID']!, process.env['AZURE_CLIENT_SECRET']!);
 
 // optionally allow to pass in explicit base/maps to upload
