@@ -320,12 +320,18 @@ export function ensureDir(dirPath: string): void {
 }
 
 export function getVersion(root: string): string | undefined {
+	console.log('GET VERSION');
+	console.log('VSCODE_DISTRO_COMMIT', process.env['VSCODE_DISTRO_COMMIT']);
+	console.log('BUILD_SOURCEVERSION', process.env['BUILD_SOURCEVERSION']);
+
 	let version = process.env['VSCODE_DISTRO_COMMIT'] || process.env['BUILD_SOURCEVERSION'];
 
 	if (!version || !/^[0-9a-f]{40}$/i.test(version.trim())) {
 		version = git.getVersion(root);
+		console.log('ELSE', version);
 	}
 
+	console.log('RESULT', version);
 	return version;
 }
 
