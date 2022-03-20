@@ -36,12 +36,6 @@ steps:
     displayName: Merge distro
 
   - script: |
-      set -e
-      git rev-parse FETCH_HEAD
-      echo VSCODE_DISTRO_COMMIT $VSCODE_DISTRO_COMMIT
-    displayName: Hmmm
-
-  - script: |
       mkdir -p .build
       node build/azure-pipelines/common/computeNodeModulesCacheKey.js $VSCODE_ARCH $ENABLE_TERRAPIN > .build/yarnlockhash
     displayName: Prepare yarn cache flags
