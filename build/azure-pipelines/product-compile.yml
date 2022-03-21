@@ -22,6 +22,9 @@ steps:
       git config user.name "VSCode"
     displayName: Prepare tooling
 
+  - script: git rev-parse HEAD
+    displayName: Where am I
+
   - script: |
       set -e
       git fetch https://github.com/$(VSCODE_MIXIN_REPO).git $VSCODE_DISTRO_REF
@@ -30,10 +33,16 @@ steps:
     condition: and(succeeded(), ne(variables.VSCODE_DISTRO_REF, ''))
     displayName: Checkout override commit
 
+  - script: git rev-parse HEAD
+    displayName: Where am I
+
   - script: |
       set -e
       git pull --no-rebase https://github.com/$(VSCODE_MIXIN_REPO).git $(node -p "require('./package.json').distro")
     displayName: Merge distro
+
+  - script: git rev-parse HEAD
+    displayName: Where am I
 
   - script: |
       mkdir -p .build
