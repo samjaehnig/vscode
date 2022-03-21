@@ -15,7 +15,7 @@ import { ServicesAccessor } from 'vs/editor/browser/editorExtensions';
 import { registerAction2, Action2, MenuId } from 'vs/platform/actions/common/actions';
 import { basename, basenameOrAuthority, dirname } from 'vs/base/common/resources';
 import { ICommandService } from 'vs/platform/commands/common/commands';
-import { SaveSourceRegistry } from 'vs/workbench/common/editor';
+import { SaveSourceRegistry, SideBySideEditor } from 'vs/workbench/common/editor';
 import { IFileService } from 'vs/platform/files/common/files';
 import { IWorkingCopyService } from 'vs/workbench/services/workingCopy/common/workingCopyService';
 import { IDialogService } from 'vs/platform/dialogs/common/dialogs';
@@ -31,7 +31,7 @@ import { LOCAL_HISTORY_DATE_FORMATTER, LOCAL_HISTORY_ICON_RESTORE, LOCAL_HISTORY
 
 const LOCAL_HISTORY_CATEGORY = { value: localize('localHistory.category', "Local History"), original: 'Local History' };
 
-interface ITimelineCommandArgument {
+export interface ITimelineCommandArgument {
 	uri: URI;
 	handle: string;
 }
@@ -99,13 +99,6 @@ registerAction2(class extends Action2 {
 		}
 	}
 });
-
-async function openEntry(entry: IWorkingCopyHistoryEntry, editorService: IEditorService): Promise<void> {
-	await editorService.openEditor({
-		resource: LocalHistoryFileSystemProvider.toLocalHistoryFileSystem({ location: entry.location, associatedResource: entry.workingCopy.resource, label: entry.workingCopy.name }),
-		label: localize('localHistoryEditorLabel', "{0} ({1} • {2})", entry.workingCopy.name, SaveSourceRegistry.getSourceLabel(entry.source), toLocalHistoryEntryDateLabel(entry.timestamp))
-	});
-}
 
 //#endregion
 
@@ -296,6 +289,9 @@ async function restore(accessor: ServicesAccessor, item: ITimelineCommandArgumen
 			resource: entry.workingCopy.resource,
 			source: restoreSaveSource
 		}, CancellationToken.None);
+
+		// Close source
+		await closeEntry(entry, editorService);
 	}
 }
 
@@ -384,7 +380,6 @@ registerAction2(class extends Action2 {
 	}
 });
 
-
 //#endregion
 
 //#region Rename
@@ -396,7 +391,7 @@ registerAction2(class extends Action2 {
 			title: { value: localize('localHistory.rename', "Rename"), original: 'Rename' },
 			menu: {
 				id: MenuId.TimelineItemContext,
-				group: '4_edit',
+				group: '5_edit',
 				order: 1,
 				when: LOCAL_HISTORY_MENU_CONTEXT_KEY
 			}
@@ -435,7 +430,7 @@ registerAction2(class extends Action2 {
 			title: { value: localize('localHistory.delete', "Delete"), original: 'Delete' },
 			menu: {
 				id: MenuId.TimelineItemContext,
-				group: '4_edit',
+				group: '5_edit',
 				order: 2,
 				when: LOCAL_HISTORY_MENU_CONTEXT_KEY
 			}
@@ -443,6 +438,7 @@ registerAction2(class extends Action2 {
 	}
 	async run(accessor: ServicesAccessor, item: ITimelineCommandArgument): Promise<void> {
 		const workingCopyHistoryService = accessor.get(IWorkingCopyHistoryService);
+		const editorService = accessor.get(IEditorService);
 		const dialogService = accessor.get(IDialogService);
 
 		const { entry } = await findLocalHistoryEntry(workingCopyHistoryService, item);
@@ -462,6 +458,9 @@ registerAction2(class extends Action2 {
 
 			// Remove via service
 			await workingCopyHistoryService.removeEntry(entry, CancellationToken.None);
+
+			// Close any opened editors
+			await closeEntry(entry, editorService);
 		}
 	}
 });
@@ -504,12 +503,28 @@ registerAction2(class extends Action2 {
 
 //#region Helpers
 
+async function openEntry(entry: IWorkingCopyHistoryEntry, editorService: IEditorService): Promise<void> {
+	const resource = LocalHistoryFileSystemProvider.toLocalHistoryFileSystem({ location: entry.location, associatedResource: entry.workingCopy.resource });
+
+	await editorService.openEditor({
+		resource,
+		label: localize('localHistoryEditorLabel', "{0} ({1} • {2})", entry.workingCopy.name, SaveSourceRegistry.getSourceLabel(entry.source), toLocalHistoryEntryDateLabel(entry.timestamp))
+	});
+}
+
+async function closeEntry(entry: IWorkingCopyHistoryEntry, editorService: IEditorService): Promise<void> {
+	const resource = LocalHistoryFileSystemProvider.toLocalHistoryFileSystem({ location: entry.location, associatedResource: entry.workingCopy.resource });
+
+	const editors = editorService.findEditors(resource, { supportSideBySide: SideBySideEditor.ANY });
+	await editorService.closeEditors(editors, { preserveFocus: true });
+}
+
 export function toDiffEditorArguments(entry: IWorkingCopyHistoryEntry, resource: URI): unknown[];
 export function toDiffEditorArguments(previousEntry: IWorkingCopyHistoryEntry, entry: IWorkingCopyHistoryEntry): unknown[];
 export function toDiffEditorArguments(arg1: IWorkingCopyHistoryEntry, arg2: IWorkingCopyHistoryEntry | URI): unknown[] {
 
 	// Left hand side is always a working copy history entry
-	const originalResource = LocalHistoryFileSystemProvider.toLocalHistoryFileSystem({ location: arg1.location, associatedResource: arg1.workingCopy.resource, label: arg1.workingCopy.name });
+	const originalResource = LocalHistoryFileSystemProvider.toLocalHistoryFileSystem({ location: arg1.location, associatedResource: arg1.workingCopy.resource });
 
 	let label: string;
 
@@ -531,7 +546,7 @@ export function toDiffEditorArguments(arg1: IWorkingCopyHistoryEntry, arg2: IWor
 	else {
 		const modified = arg2;
 
-		modifiedResource = LocalHistoryFileSystemProvider.toLocalHistoryFileSystem({ location: modified.location, associatedResource: modified.workingCopy.resource, label: modified.workingCopy.name });
+		modifiedResource = LocalHistoryFileSystemProvider.toLocalHistoryFileSystem({ location: modified.location, associatedResource: modified.workingCopy.resource });
 		label = localize('localHistoryCompareToPreviousEditorLabel', "{0} ({1} • {2}) ↔ {3} ({4} • {5})", arg1.workingCopy.name, SaveSourceRegistry.getSourceLabel(arg1.source), toLocalHistoryEntryDateLabel(arg1.timestamp), modified.workingCopy.name, SaveSourceRegistry.getSourceLabel(modified.source), toLocalHistoryEntryDateLabel(modified.timestamp));
 	}
 
@@ -543,7 +558,7 @@ export function toDiffEditorArguments(arg1: IWorkingCopyHistoryEntry, arg2: IWor
 	];
 }
 
-async function findLocalHistoryEntry(workingCopyHistoryService: IWorkingCopyHistoryService, descriptor: ITimelineCommandArgument): Promise<{ entry: IWorkingCopyHistoryEntry | undefined; previous: IWorkingCopyHistoryEntry | undefined }> {
+export async function findLocalHistoryEntry(workingCopyHistoryService: IWorkingCopyHistoryService, descriptor: ITimelineCommandArgument): Promise<{ entry: IWorkingCopyHistoryEntry | undefined; previous: IWorkingCopyHistoryEntry | undefined }> {
 	const entries = await workingCopyHistoryService.getEntries(descriptor.uri, CancellationToken.None);
 
 	let currentEntry: IWorkingCopyHistoryEntry | undefined = undefined;
