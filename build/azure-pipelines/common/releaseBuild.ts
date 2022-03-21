@@ -5,13 +5,9 @@
 
 'use strict';
 
-import * as path from 'path';
 import { ClientSecretCredential } from '@azure/identity';
 import { CosmosClient } from '@azure/cosmos';
 import { retry } from './retry';
-import * as util from '../../lib/util';
-
-const root = path.dirname(path.dirname(path.dirname(__dirname)));
 
 function getEnv(name: string): string {
 	const result = process.env[name];
@@ -48,7 +44,7 @@ async function getConfig(client: CosmosClient, quality: string): Promise<Config>
 }
 
 async function main(): Promise<void> {
-	const commit = util.getVersion(root);
+	const commit = process.env['VSCODE_DISTRO_COMMIT'] || getEnv('BUILD_SOURCEVERSION');
 	const quality = getEnv('VSCODE_QUALITY');
 
 	const aadCredentials = new ClientSecretCredential(process.env['AZURE_TENANT_ID']!, process.env['AZURE_CLIENT_ID']!, process.env['AZURE_CLIENT_SECRET']!);

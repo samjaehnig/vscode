@@ -5,13 +5,9 @@
 
 'use strict';
 
-import * as path from 'path';
 import { ClientSecretCredential } from '@azure/identity';
 import { CosmosClient } from '@azure/cosmos';
 import { retry } from './retry';
-import * as util from '../../lib/util';
-
-const root = path.dirname(path.dirname(path.dirname(__dirname)));
 
 if (process.argv.length !== 3) {
 	console.error('Usage: node createBuild.js VERSION');
@@ -31,9 +27,9 @@ function getEnv(name: string): string {
 async function main(): Promise<void> {
 	const [, , _version] = process.argv;
 	const quality = getEnv('VSCODE_QUALITY');
-	const commit = util.getVersion(root);
+	const commit = process.env['VSCODE_DISTRO_COMMIT'] || getEnv('BUILD_SOURCEVERSION');
 	const queuedBy = getEnv('BUILD_QUEUEDBY');
-	const sourceBranch = getEnv('BUILD_SOURCEBRANCH');
+	const sourceBranch = process.env['VSCODE_DISTRO_REF'] || getEnv('BUILD_SOURCEBRANCH');
 	const version = _version + (quality === 'stable' ? '' : `-${quality}`);
 
 	console.log('Creating build...');
